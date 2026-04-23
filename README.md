@@ -1,4 +1,4 @@
-# Français Fácil 🇫🇷
+# Français Fácil + Claude 🇫🇷
 
 Aplicación web interactiva para aprender las **combinaciones de letras y vocales del francés** con mnemotecnias, emojis, audio y juegos. Pensada para hispanohablantes que apenas empiezan.
 
