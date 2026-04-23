@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Français Fácil - Aprende combinaciones de letras y vocales</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --accent-2: #dc2626;
+    --good: #059669;
+    --bad: #dc2626;
+    --shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    padding: 20px 12px 8px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: 0.5px;
+  }
+  header h1 span.fr-blue { color: #0055A4; }
+  header h1 span.fr-white { color: #ffffff; text-shadow: 0 0 2px #999; }
+  header h1 span.fr-red { color: #EF4135; }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  nav.modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+    border-bottom: 1px solid #eee;
+  }
+  nav.modes button {
+    border: 2px solid var(--ink);
+    background: var(--card);
+    padding: 8px 16px;
+    border-radius: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform .1s ease;
+  }
+  nav.modes button:hover { transform: translateY(-2px); }
+  nav.modes button.active {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  /* ---------- GRID (Explorar) ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    border-top: 6px solid var(--accent);
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(0,0,0,0.12); }
+  .card .combo {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .card .sound {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .card .examples {
+    margin: 4px 0 0;
+    padding-left: 18px;
+    font-size: 14px;
+    color: #374151;
+  }
+  .card .examples li b { color: var(--accent-2); }
+  .section-title {
+    margin: 22px 0 10px;
+    font-size: 18px;
+    text-align: center;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ---------- MODAL DETALLE ---------- */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 16px;
+    z-index: 100;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal .combo-big {
+    font-size: 72px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1;
+  }
+  .modal .sound-big {
+    text-align: center;
+    color: var(--muted);
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .mnemo {
+    background: #fff7ed;
+    border-left: 5px solid #f59e0b;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 15px;
+  }
+  .mnemo b { color: #b45309; }
+  .word-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    background: #f9fafb;
+  }
+  .word-row .fr { font-weight: 700; font-size: 16px; }
+  .word-row .es { color: var(--muted); font-size: 13px; }
+  .word-row button {
+    background: var(--accent);
+    color: white;
+    border: 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .modal-close {
+    background: #e5e7eb; border: 0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    float: right;
+    font-weight: 600;
+  }
+
+  /* ---------- FLASHCARDS ---------- */
+  .flash-container {
+    max-width: 520px;
+    margin: 10px auto;
+    text-align: center;
+  }
+  .flash {
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 20px;
+    box-shadow: var(--shadow);
+    min-height: 320px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    cursor: pointer;
+    user-select: none;
+    perspective: 1000px;
+  }
+  .flash .big-combo {
+    font-size: 90px;
+    font-weight: 900;
+  }
+  .flash .hint {
+    color: var(--muted);
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  .flash.flipped .front { display: none; }
+  .flash:not(.flipped) .back { display: none; }
+  .flash .back .sound-big { font-size: 32px; font-weight: 700; color: var(--accent); }
+  .flash .back .mnemo { margin-top: 12px; text-align: left; }
+  .flash .back ul { text-align: left; }
+  .flash-buttons { margin-top: 14px; display: flex; gap: 10px; justify-content: center; }
+  .flash-buttons button {
+    padding: 10px 18px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .btn-hard { background: #fee2e2; color: #991b1b; }
+  .btn-easy { background: #d1fae5; color: #065f46; }
+  .btn-next { background: var(--ink); color: #fff; }
+
+  /* ---------- QUIZ ---------- */
+  .quiz-wrap {
+    max-width: 620px;
+    margin: 8px auto;
+  }
+  .quiz-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .quiz-card .prompt {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: var(--muted);
+  }
+  .quiz-card .big-word {
+    font-size: 46px;
+    font-weight: 800;
+    margin: 10px 0 18px;
+  }
+  .options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .options button {
+    padding: 14px;
+    font-size: 18px;
+    font-weight: 700;
+    border: 2px solid #e5e7eb;
+    background: #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .options button:hover { border-color: var(--accent); }
+  .options button.correct { background: #d1fae5; border-color: var(--good); }
+  .options button.wrong { background: #fee2e2; border-color: var(--bad); }
+  .score-bar {
+    display: flex; justify-content: space-between;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--muted);
+  }
+  .feedback {
+    margin-top: 14px;
+    font-weight: 600;
+    min-height: 24px;
+  }
+  .feedback.ok { color: var(--good); }
+  .feedback.ko { color: var(--bad); }
+
+  /* ---------- TYPING GAME ---------- */
+  .type-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    max-width: 520px;
+    margin: 8px auto;
+    text-align: center;
+  }
+  .type-card input {
+    padding: 12px 16px;
+    font-size: 22px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    text-align: center;
+    width: 80%;
+    margin-top: 10px;
+  }
+  .type-card input:focus { outline: none; border-color: var(--accent); }
+  .type-hint {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  /* ---------- PROGRESO ---------- */
+  .progress {
+    display: flex; justify-content: center; gap: 18px;
+    font-size: 14px; color: var(--muted);
+    margin-top: 6px;
+  }
+  .progress span b { color: var(--ink); font-size: 16px; }
+
+  footer {
+    text-align: center;
+    padding: 18px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  @media (max-width: 500px) {
+    .card .combo { font-size: 28px; }
+    .flash .big-combo { font-size: 64px; }
+    .options { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span class="fr-blue">Fran</span><span class="fr-red">çais</span>
+    Fácil
+  </h1>
+  <p>Aprende las combinaciones de letras y vocales del francés con mnemotecnias, audio y juegos</p>
+  <div class="progress">
+    <span>Vistas: <b id="seenCount">0</b></span>
+    <span>Dominadas: <b id="masteredCount">0</b></span>
+    <span>Puntos: <b id="pointsCount">0</b></span>
+  </div>
+</header>
+
+<nav class="modes">
+  <button data-mode="explore" class="active">Explorar</button>
+  <button data-mode="flash">Flashcards</button>
+  <button data-mode="quiz-sound">Quiz: sonido</button>
+  <button data-mode="quiz-word">Quiz: palabra</button>
+  <button data-mode="typing">Escribir</button>
+  <button data-mode="visual" style="background:#fce7f3;border-color:#db2777;">🎨 Visual</button>
+  <button data-mode="match" style="background:#dcfce7;border-color:#16a34a;">🎮 Parejas</button>
+  <button data-mode="challenges" style="background:#fef3c7;border-color:#d97706;">🏆 Retos</button>
+</nav>
+
+<main id="app"></main>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<footer>
+  Hecho para aprender francés pasito a pasito. Usa el altavoz 🔊 para oír la pronunciación.
+</footer>
+
+<script>
+// =============================================================
+//  DATOS: combinaciones + sonido + mnemotecnia + palabras
+// =============================================================
+const DATA = [
+  // ----- Combinaciones de letras -----
+  { group: "letras", combo: "é", sound: "ay", color: "#fde2e4",
+    mnemo: "La <b>é</b> con tilde hacia la derecha = sonido claro <b>'ey'</b> (como en 'café' en español).",
+    words: [
+      { fr: "cinéma", es: "cine" },
+      { fr: "déteste", es: "detesta" },
+      { fr: "février", es: "febrero" },
+      { fr: "café", es: "café" }
+    ]
+  },
+  { group: "letras", combo: "è", sound: "eh", color: "#fff3b0",
+    mnemo: "La tilde al revés (grave) = boca <b>más abierta</b>. Suena como la 'e' de 'perro' en español.",
+    words: [
+      { fr: "règle", es: "regla" },
+      { fr: "très", es: "muy" },
+      { fr: "frère", es: "hermano" },
+      { fr: "collège", es: "colegio" }
+    ]
+  },
+  { group: "letras", combo: "e", sound: "uh", color: "#e5e5e5",
+    mnemo: "La <b>e</b> sin tilde es <b>casi muda</b>, como un suspiro: 'eh…'. Piensa en '<b>le</b>' = 'leuh'.",
+    words: [
+      { fr: "le", es: "el" },
+      { fr: "je", es: "yo" },
+      { fr: "ne", es: "no (partícula)" },
+      { fr: "cheveux", es: "cabello" }
+    ]
+  },
+  { group: "letras", combo: "ch", sound: "sh", color: "#d4edda",
+    mnemo: "En francés <b>ch = 'sh'</b> (como 'show' en inglés). ¡Nunca suena como 'ch' español! Chat = 'shá'.",
+    words: [
+      { fr: "blanche", es: "blanca" },
+      { fr: "chat", es: "gato" },
+      { fr: "chaise", es: "silla" },
+      { fr: "douche", es: "ducha" }
+    ]
+  },
+  { group: "letras", combo: "qu", sound: "k", color: "#c9c0d3",
+    mnemo: "<b>qu = K</b> seca, la 'u' desaparece. '<b>qu</b>atre' = 'katr'. Igual que en español 'queso'.",
+    words: [
+      { fr: "quel", es: "cuál" },
+      { fr: "Belgique", es: "Bélgica" },
+      { fr: "quatre", es: "cuatro" },
+      { fr: "banque", es: "banco" }
+    ]
+  },
+  { group: "letras", combo: "ique", sound: "eek", color: "#b8dbca",
+    mnemo: "Terminación <b>-ique = 'ik'</b>. La 'e' final es muda. Mu<b>sique</b> = 'mu-ZIK'.",
+    words: [
+      { fr: "musique", es: "música" },
+      { fr: "informatique", es: "informática" },
+      { fr: "fantastique", es: "fantástico" },
+      { fr: "fabrique", es: "fábrica" }
+    ]
+  },
+  { group: "letras", combo: "i", sound: "ee", color: "#6aa84f",
+    mnemo: "La <b>i</b> suena largo <b>'iii'</b>. '<b>s</b>ix' = 'siss' (con 's' al final).",
+    words: [
+      { fr: "six", es: "seis" },
+      { fr: "huit", es: "ocho" },
+      { fr: "lundi", es: "lunes" },
+      { fr: "lit", es: "cama" }
+    ]
+  },
+  { group: "letras", combo: "oi", sound: "wah", color: "#38761d", textColor: "#fff",
+    mnemo: "<b>oi = 'uá'</b>. Truco: piensa en 'Guau!' pero sin G. <b>Moi</b> = 'muá'. <b>Trois</b> = 'truá'.",
+    words: [
+      { fr: "moi", es: "yo (tónico)" },
+      { fr: "trois", es: "tres" },
+      { fr: "poisson", es: "pescado" },
+      { fr: "oiseau", es: "pájaro" }
+    ]
+  },
+  { group: "letras", combo: "ç", sound: "ss", color: "#f4a261",
+    mnemo: "La <b>c con colita (ç)</b> siempre suena como <b>'s'</b>. Sin colita, 'c' + a/o/u sonaría 'k'. Garçon = 'garsón'.",
+    words: [
+      { fr: "français", es: "francés" },
+      { fr: "ça va", es: "¿qué tal?" },
+      { fr: "garçon", es: "chico/mozo" },
+      { fr: "maçon", es: "albañil" }
+    ]
+  },
+  { group: "letras", combo: "ill", sound: "eey (ij)", color: "#c8e6a0",
+    mnemo: "<b>ill = 'iy'</b> (como 'paella' sin la p). Fi<b>lle</b> = 'fiy'. Ju<b>ill</b>et = 'yuyé'.",
+    words: [
+      { fr: "juillet", es: "julio" },
+      { fr: "stylo à bille", es: "bolígrafo" },
+      { fr: "famille", es: "familia" },
+      { fr: "fille", es: "chica/hija" }
+    ]
+  },
+  { group: "letras", combo: "eux", sound: "uh", color: "#a7c7e7",
+    mnemo: "<b>eux</b> = boquita redonda, sonido '<b>ö</b>' (entre 'e' y 'o'). La 'x' es muda. Deux = 'dö'.",
+    words: [
+      { fr: "cheveux", es: "cabello" },
+      { fr: "yeux", es: "ojos" },
+      { fr: "deux", es: "dos" },
+      { fr: "feux", es: "fuegos" }
+    ]
+  },
+  { group: "letras", combo: "ph", sound: "f", color: "#8b0000", textColor: "#fff",
+    mnemo: "<b>ph = F</b> (igual que en español 'filosofía' vs inglés 'philosophy'). Photo = 'foto'.",
+    words: [
+      { fr: "la philosophie", es: "la filosofía" },
+      { fr: "Philippe", es: "Felipe" },
+      { fr: "la pharmacie", es: "la farmacia" },
+      { fr: "la photographie", es: "la fotografía" }
+    ]
+  },
+  { group: "letras", combo: "ch (exc.)", sound: "sh", color: "#2e7d32", textColor: "#fff",
+    mnemo: "Recordatorio: <b>ch</b> en palabras normales = 'sh'. Chat = 'sha', chocolat = 'shokolá'.",
+    words: [
+      { fr: "un chat", es: "un gato" },
+      { fr: "un chanteur", es: "un cantante" },
+      { fr: "une chose", es: "una cosa" },
+      { fr: "un chocolat", es: "un chocolate" }
+    ]
+  },
+  { group: "letras", combo: "gn", sound: "ñ", color: "#6d597a", textColor: "#fff",
+    mnemo: "<b>gn = Ñ</b> española. Champi<b>gn</b>on = 'champiñón'. Mi<b>gn</b>on = 'miñón'. ¡Igualito!",
+    words: [
+      { fr: "un champignon", es: "un champiñón" },
+      { fr: "une ligne", es: "una línea" },
+      { fr: "mignon", es: "lindo/mono" },
+      { fr: "gagner", es: "ganar" }
+    ]
+  },
+  { group: "letras", combo: "gne", sound: "nyuh", color: "#8e44ad", textColor: "#fff",
+    mnemo: "<b>gne</b> final = 'ñ' + una 'e' muy suave, como 'ñe…'. Monta<b>gne</b> = 'montañe'.",
+    words: [
+      { fr: "Allemagne", es: "Alemania" },
+      { fr: "campagne", es: "campo" },
+      { fr: "montagne", es: "montaña" },
+      { fr: "ligne", es: "línea" }
+    ]
+  },
+  { group: "letras", combo: "an", sound: "on (nasal)", color: "#b3cde0",
+    mnemo: "<b>an = ON nasal</b> (sale por la nariz, sin cerrar la n). France = 'frans' pero con la 'an' por la nariz.",
+    words: [
+      { fr: "ans", es: "años" },
+      { fr: "janvier", es: "enero" },
+      { fr: "blanc", es: "blanco" },
+      { fr: "France", es: "Francia" }
+    ]
+  },
+  { group: "letras", combo: "eau", sound: "oh", color: "#ffb4a2",
+    mnemo: "<b>eau = 'o'</b> cerrada. ¡Tres letras, un solo sonido! Gât<b>eau</b> = 'gató'. Beau = 'bo'.",
+    words: [
+      { fr: "oiseau", es: "pájaro" },
+      { fr: "beau", es: "bonito" },
+      { fr: "gâteau", es: "pastel" },
+      { fr: "bureau", es: "oficina" }
+    ]
+  },
+  { group: "letras", combo: "en", sound: "on (nasal)", color: "#ffe0b2",
+    mnemo: "<b>en</b> también suena como <b>ON nasal</b> (igual que 'an'). Vendredi = 'vondredí'.",
+    words: [
+      { fr: "vendredi", es: "viernes" },
+      { fr: "vent", es: "viento" },
+      { fr: "ennuyeux", es: "aburrido" },
+      { fr: "cent", es: "cien" }
+    ]
+  },
+  { group: "letras", combo: "in", sound: "an (nasal)", color: "#f8bbd0",
+    mnemo: "<b>in = 'AN' nasal</b> (boca sonriente). Cinq = 'sank'. Vingt = 'van'. Lapin = 'lapán'.",
+    words: [
+      { fr: "cinq", es: "cinco" },
+      { fr: "vingt", es: "veinte" },
+      { fr: "lapin", es: "conejo" },
+      { fr: "juin", es: "junio" }
+    ]
+  },
+  { group: "letras", combo: "gu", sound: "g", color: "#9c27b0", textColor: "#fff",
+    mnemo: "<b>gu + e/i</b> suena 'g' fuerte (la 'u' no se oye). Guitare = 'guitar' (como español 'guitarra').",
+    words: [
+      { fr: "une bague", es: "un anillo" },
+      { fr: "guiche", es: "'guiche' (copete)" },
+      { fr: "guitare", es: "guitarra" },
+      { fr: "vague", es: "ola" }
+    ]
+  },
+
+  // ----- Combinaciones de vocales -----
+  { group: "vocales", combo: "eu", sound: "ë (eu)", color: "#ffff66",
+    mnemo: "<b>eu</b> = boca de 'o', lengua de 'e'. Suena tipo 'ë'. Jeu = 'zhë'. Peu = 'pë'.",
+    words: [
+      { fr: "un jeu", es: "un juego" },
+      { fr: "peu", es: "poco" },
+      { fr: "bleu", es: "azul" },
+      { fr: "jeudi", es: "jueves" }
+    ]
+  },
+  { group: "vocales", combo: "ai / ei", sound: "E (eh)", color: "#a6c8ff",
+    mnemo: "<b>ai</b> y <b>ei</b> = sonido 'E' abierto (como 'è'). Lait = 'lé'. Soleil = 'soléy'.",
+    words: [
+      { fr: "le soleil", es: "el sol" },
+      { fr: "le lait", es: "la leche" },
+      { fr: "frais", es: "fresco" },
+      { fr: "mais", es: "pero" }
+    ]
+  },
+  { group: "vocales", combo: "au / eau", sound: "O", color: "#ffcdb2",
+    mnemo: "<b>au</b> y <b>eau</b> = <b>'o'</b> cerrada. Faux = 'fo'. Beau = 'bo'. Una sílaba.",
+    words: [
+      { fr: "faux", es: "falso" },
+      { fr: "autre", es: "otro" },
+      { fr: "beau", es: "bonito" },
+      { fr: "l'eau", es: "el agua" }
+    ]
+  },
+  { group: "vocales", combo: "ou", sound: "U", color: "#ffe066",
+    mnemo: "<b>ou = U española</b>. ¡Fácil! Une roue = 'un ru'. Fou = 'fu'. Ouvrir = 'uvrir'.",
+    words: [
+      { fr: "une roue", es: "una rueda" },
+      { fr: "un cou", es: "un cuello" },
+      { fr: "fou", es: "loco" },
+      { fr: "ouvrir", es: "abrir" }
+    ]
+  },
+  { group: "vocales", combo: "oi", sound: "uá / wa", color: "#c9a0dc",
+    mnemo: "<b>oi = 'uá'</b> (igual que arriba). Voiture = 'vuatür'. Oiseau = 'uasó'. Froid = 'fruá'.",
+    words: [
+      { fr: "une voiture", es: "un coche" },
+      { fr: "un oiseau", es: "un pájaro" },
+      { fr: "froid", es: "frío" }
+    ]
+  }
+];
+
+// =============================================================
+//  ESTADO / PROGRESO
+// =============================================================
+const state = {
+  mode: "explore",
+  seen: new Set(JSON.parse(localStorage.getItem("fr_seen") || "[]")),
+  mastered: new Set(JSON.parse(localStorage.getItem("fr_mastered") || "[]")),
+  points: parseInt(localStorage.getItem("fr_points") || "0", 10),
+  flashIdx: 0,
+  flashOrder: [],
+  quiz: null
+};
+
+function saveProgress() {
+  localStorage.setItem("fr_seen", JSON.stringify([...state.seen]));
+  localStorage.setItem("fr_mastered", JSON.stringify([...state.mastered]));
+  localStorage.setItem("fr_points", String(state.points));
+  document.getElementById("seenCount").textContent = state.seen.size;
+  document.getElementById("masteredCount").textContent = state.mastered.size;
+  document.getElementById("pointsCount").textContent = state.points;
+}
+
+function markSeen(combo) {
+  state.seen.add(combo);
+  saveProgress();
+}
+
+// =============================================================
+//  AUDIO: pronunciación francesa (Web Speech API)
+// =============================================================
+let frVoice = null;
+function pickFrenchVoice() {
+  const voices = speechSynthesis.getVoices();
+  frVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr"))
+         || voices.find(v => /french|français/i.test(v.name))
+         || null;
+}
+if (typeof speechSynthesis !== "undefined") {
+  pickFrenchVoice();
+  speechSynthesis.onvoiceschanged = pickFrenchVoice;
+}
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "fr-FR";
+  if (frVoice) u.voice = frVoice;
+  u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+
+// =============================================================
+//  NAVEGACIÓN DE MODOS
+// =============================================================
+document.querySelectorAll("nav.modes button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("nav.modes button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.mode = btn.dataset.mode;
+    render();
+  });
+});
+
+// =============================================================
+//  RENDER PRINCIPAL
+// =============================================================
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  if (state.mode === "explore") renderExplore(app);
+  else if (state.mode === "flash") renderFlash(app);
+  else if (state.mode === "quiz-sound") renderQuiz(app, "sound");
+  else if (state.mode === "quiz-word") renderQuiz(app, "word");
+  else if (state.mode === "typing") renderTyping(app);
+  else if (state.mode === "challenges") renderChallenges(app);
+  else if (state.mode === "visual") renderVisual(app);
+  else if (state.mode === "match") renderMatch(app);
+}
+
+// ---------- EXPLORAR ----------
+function renderExplore(root) {
+  const makeCard = (item) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.borderTopColor = item.color || "#2563eb";
+    card.style.background = "#ffffff";
+    const mastered = state.mastered.has(item.combo);
+    card.innerHTML = `
+      <div class="combo" style="color:${item.color && item.color !== '#ffffff' ? darken(item.color, 20) : '#111'}">${item.combo} ${mastered ? "✓" : ""}</div>
+      <div class="sound">Suena: <b>${item.sound}</b></div>
+      <ul class="examples" style="list-style:none;padding:0;">
+        ${item.words.slice(0, 3).map(w => `<li style="padding:2px 0;"><span style="font-size:18px;margin-right:6px;">${getEmoji(w.fr)}</span>${highlight(w.fr, item.combo)}</li>`).join("")}
+      </ul>
+    `;
+    card.addEventListener("click", () => openModal(item));
+    return card;
+  };
+
+  const letras = DATA.filter(d => d.group === "letras");
+  const vocales = DATA.filter(d => d.group === "vocales");
+
+  const t1 = document.createElement("div");
+  t1.className = "section-title";
+  t1.textContent = "Combinaisons de lettres";
+  root.appendChild(t1);
+  const g1 = document.createElement("div"); g1.className = "grid";
+  letras.forEach(it => g1.appendChild(makeCard(it)));
+  root.appendChild(g1);
+
+  const t2 = document.createElement("div");
+  t2.className = "section-title";
+  t2.textContent = "Combinaisons de voyelles";
+  root.appendChild(t2);
+  const g2 = document.createElement("div"); g2.className = "grid";
+  vocales.forEach(it => g2.appendChild(makeCard(it)));
+  root.appendChild(g2);
+}
+
+function highlight(word, combo) {
+  // resaltar la combinación en rojo si aparece (forma sencilla)
+  const base = combo.replace(/ \(.*\)/, "").split(" / ")[0];
+  const re = new RegExp("(" + base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "i");
+  return word.replace(re, "<b>$1</b>");
+}
+
+function darken(hex, amt) {
+  try {
+    const c = hex.replace("#", "");
+    const num = parseInt(c, 16);
+    let r = (num >> 16) - amt; if (r < 0) r = 0;
+    let g = ((num >> 8) & 0xFF) - amt; if (g < 0) g = 0;
+    let b = (num & 0xFF) - amt; if (b < 0) b = 0;
+    return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+  } catch (e) { return "#111"; }
+}
+
+// ---------- MODAL DETALLE ----------
+function openModal(item) {
+  markSeen(item.combo);
+  const bg = document.getElementById("modalBg");
+  const c = document.getElementById("modalContent");
+  c.innerHTML = `
+    <button class="modal-close" id="closeBtn">Cerrar ✕</button>
+    <div class="combo-big" style="color:${darken(item.color || '#2563eb', 30)}">${item.combo}</div>
+    <div class="sound-big">Suena: <b>${item.sound}</b></div>
+    <div class="mnemo"><b>💡 Truco:</b> ${item.mnemo}</div>
+    <div>
+      ${item.words.map(w => `
+        <div class="word-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-size:32px;">${getEmoji(w.fr)}</div>
+            <div>
+              <div class="fr">${highlight(w.fr, item.combo)}</div>
+              <div class="es">${w.es}</div>
+            </div>
+          </div>
+          <button onclick="speak('${w.fr.replace(/'/g, "\\'")}')" title="Escuchar">🔊</button>
+        </div>
+      `).join("")}
+    </div>
+    <div style="text-align:center; margin-top:14px;">
+      <button class="btn-easy" style="padding:10px 18px; font-weight:700; border:0; border-radius:10px; cursor:pointer;"
+        onclick="markMastered('${item.combo.replace(/'/g, "\\'")}')">¡Ya me lo sé! ⭐</button>
+    </div>
+  `;
+  bg.classList.add("open");
+  document.getElementById("closeBtn").onclick = closeModal;
+  bg.onclick = (e) => { if (e.target === bg) closeModal(); };
+}
+function closeModal() {
+  document.getElementById("modalBg").classList.remove("open");
+  render();
+}
+function markMastered(combo) {
+  state.mastered.add(combo);
+  state.points += 5;
+  saveProgress();
+  closeModal();
+}
+window.markMastered = markMastered;
+window.speak = speak;
+
+// ---------- FLASHCARDS ----------
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function renderFlash(root) {
+  if (state.flashOrder.length === 0) {
+    state.flashOrder = shuffle(DATA.map((_, i) => i));
+    state.flashIdx = 0;
+  }
+  const item = DATA[state.flashOrder[state.flashIdx]];
+  markSeen(item.combo);
+
+  const wrap = document.createElement("div");
+  wrap.className = "flash-container";
+  wrap.innerHTML = `
+    <div class="flash" id="flashEl">
+      <div class="front">
+        <div class="big-combo" style="color:${darken(item.color || '#2563eb', 30)}">${item.combo}</div>
+        <div class="hint">👉 Toca la tarjeta para ver el sonido y el truco</div>
+      </div>
+      <div class="back">
+        <div class="sound-big">${item.sound}</div>
+        <div class="mnemo">${item.mnemo}</div>
+        <ul style="list-style:none;padding:0;">
+          ${item.words.slice(0, 3).map(w => `<li style="padding:4px 0;font-size:16px;"><span style="font-size:24px;margin-right:8px;">${getEmoji(w.fr)}</span><b>${w.fr}</b> — <span style="color:var(--muted);">${w.es}</span></li>`).join("")}
+        </ul>
+        <div style="text-align:center; margin-top:8px;">
+          <button onclick="speak('${item.words[0].fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;">🔊 Escuchar ejemplo</button>
+        </div>
+      </div>
+    </div>
+    <div class="flash-buttons">
+      <button class="btn-hard" id="hardBtn">😕 Repasar</button>
+      <button class="btn-easy" id="easyBtn">😄 Fácil</button>
+      <button class="btn-next" id="nextBtn">Siguiente →</button>
+    </div>
+    <div style="text-align:center;margin-top:10px;color:var(--muted);font-size:13px;">
+      ${state.flashIdx + 1} / ${state.flashOrder.length}
+    </div>
+  `;
+  root.appendChild(wrap);
+
+  const flashEl = document.getElementById("flashEl");
+  flashEl.addEventListener("click", () => flashEl.classList.toggle("flipped"));
+
+  document.getElementById("nextBtn").onclick = () => { nextFlash(); };
+  document.getElementById("easyBtn").onclick = () => {
+    state.mastered.add(item.combo);
+    state.points += 3;
+    saveProgress();
+    nextFlash();
+  };
+  document.getElementById("hardBtn").onclick = () => {
+    // mueve al final para repetir
+    const cur = state.flashOrder.splice(state.flashIdx, 1)[0];
+    state.flashOrder.push(cur);
+    render();
+  };
+}
+function nextFlash() {
+  state.flashIdx++;
+  if (state.flashIdx >= state.flashOrder.length) {
+    state.flashOrder = shuffle(DATA.map((_, i) => i));
+    state.flashIdx = 0;
+  }
+  render();
+}
+
+// ---------- QUIZ ----------
+function renderQuiz(root, kind) {
+  if (!state.quiz) state.quiz = { score: 0, total: 0, streak: 0 };
+  const correct = DATA[Math.floor(Math.random() * DATA.length)];
+  markSeen(correct.combo);
+  const word = correct.words[Math.floor(Math.random() * correct.words.length)];
+
+  // 3 distractores
+  const pool = DATA.filter(d => d.combo !== correct.combo);
+  const distractors = shuffle(pool).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+
+  const wrap = document.createElement("div");
+  wrap.className = "quiz-wrap";
+  const promptText = kind === "sound"
+    ? "¿Qué <b>sonido</b> corresponde a esta combinación?"
+    : "¿Qué <b>combinación</b> escuchas en esta palabra?";
+
+  const centerBig = kind === "sound"
+    ? `<div class="big-word" style="color:${darken(correct.color || '#2563eb', 30)}">${correct.combo}</div>`
+    : `<div class="big-word">${word.fr} <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:18px;">🔊</button></div>
+       <div style="color:var(--muted);font-size:14px;margin-top:-10px;">(${word.es})</div>`;
+
+  const optionHtml = options.map(o => {
+    const label = kind === "sound" ? o.sound : o.combo;
+    return `<button data-correct="${o.combo === correct.combo}" data-combo="${o.combo}">${label}</button>`;
+  }).join("");
+
+  wrap.innerHTML = `
+    <div class="score-bar">
+      <span>Racha: 🔥 ${state.quiz.streak}</span>
+      <span>Puntaje: ${state.quiz.score} / ${state.quiz.total}</span>
+    </div>
+    <div class="quiz-card">
+      <div class="prompt">${promptText}</div>
+      ${centerBig}
+      <div class="options">${optionHtml}</div>
+      <div class="feedback" id="qFb"></div>
+      <button id="nextQuiz" style="display:none;margin-top:14px;padding:10px 20px;background:var(--ink);color:#fff;border:0;border-radius:10px;font-weight:600;cursor:pointer;">Siguiente →</button>
+    </div>
+  `;
+  root.appendChild(wrap);
+
+  if (kind === "word") speak(word.fr);
+
+  wrap.querySelectorAll(".options button").forEach(b => {
+    b.addEventListener("click", () => {
+      const isCorrect = b.dataset.correct === "true";
+      state.quiz.total++;
+      if (isCorrect) {
+        b.classList.add("correct");
+        state.quiz.score++;
+        state.quiz.streak++;
+        state.points += 2 + Math.min(state.quiz.streak, 5);
+        document.getElementById("qFb").textContent = `¡Correcto! 🎉  +${2 + Math.min(state.quiz.streak, 5)} pts`;
+        document.getElementById("qFb").className = "feedback ok";
+        if (state.quiz.streak >= 3) state.mastered.add(correct.combo);
+      } else {
+        b.classList.add("wrong");
+        state.quiz.streak = 0;
+        // mostrar la correcta
+        wrap.querySelectorAll(".options button").forEach(x => {
+          if (x.dataset.correct === "true") x.classList.add("correct");
+        });
+        document.getElementById("qFb").innerHTML = `Respuesta correcta: <b>${kind === "sound" ? correct.sound : correct.combo}</b>.<br><span style="font-weight:400">${correct.mnemo}</span>`;
+        document.getElementById("qFb").className = "feedback ko";
+      }
+      saveProgress();
+      wrap.querySelectorAll(".options button").forEach(x => x.disabled = true);
+      document.getElementById("nextQuiz").style.display = "inline-block";
+    });
+  });
+
+  document.getElementById("nextQuiz").addEventListener("click", render);
+}
+
+// ---------- TYPING ----------
+function renderTyping(root) {
+  const item = DATA[Math.floor(Math.random() * DATA.length)];
+  markSeen(item.combo);
+  const word = item.words[Math.floor(Math.random() * item.words.length)];
+
+  const wrap = document.createElement("div");
+  wrap.className = "type-card";
+  wrap.innerHTML = `
+    <div style="color:var(--muted); font-size:14px;">Escucha y escribe la palabra en francés:</div>
+    <div style="margin-top:10px;">
+      <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:12px 18px;border-radius:10px;cursor:pointer;font-size:18px;">🔊 Escuchar</button>
+    </div>
+    <div style="margin-top:12px; color:var(--muted); font-size:14px;">Significado: <b>${word.es}</b></div>
+    <div style="margin-top:4px; font-size:12px; color:var(--muted);">Pista: contiene <b>${item.combo}</b> (${item.sound})</div>
+    <input id="typeIn" autocomplete="off" spellcheck="false" placeholder="tu respuesta…" />
+    <div class="type-hint">Pulsa Enter para comprobar</div>
+    <div id="typeFb" class="feedback"></div>
+    <button id="typeNext" style="display:none;margin-top:14px;padding:10px 20px;background:var(--ink);color:#fff;border:0;border-radius:10px;font-weight:600;cursor:pointer;">Siguiente →</button>
+  `;
+  root.appendChild(wrap);
+  const input = document.getElementById("typeIn");
+  input.focus();
+  // reproduce automáticamente una vez
+  setTimeout(() => speak(word.fr), 300);
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const ans = normalize(input.value.trim());
+      const good = normalize(word.fr);
+      const fb = document.getElementById("typeFb");
+      if (ans === good) {
+        fb.textContent = "¡Perfecto! 🎉 +5 pts";
+        fb.className = "feedback ok";
+        state.points += 5;
+        input.style.borderColor = "var(--good)";
+      } else {
+        fb.innerHTML = `Respuesta: <b>${word.fr}</b>. Tú escribiste: <i>${input.value || "(vacío)"}</i>`;
+        fb.className = "feedback ko";
+        input.style.borderColor = "var(--bad)";
+      }
+      saveProgress();
+      input.disabled = true;
+      document.getElementById("typeNext").style.display = "inline-block";
+    }
+  });
+  document.getElementById("typeNext").addEventListener("click", render);
+}
+
+// =============================================================
+//  🎨 DICCIONARIO DE EMOJIS (asociación visual)
+// =============================================================
+const EMOJIS = {
+  "cinéma": "🎬", "déteste": "😤", "février": "❄️", "café": "☕",
+  "règle": "📏", "très": "💯", "frère": "👦", "collège": "🏫",
+  "le": "👉", "je": "🙋", "ne": "🚫", "cheveux": "💇",
+  "blanche": "⚪", "chat": "🐱", "chaise": "🪑", "douche": "🚿",
+  "quel": "❓", "Belgique": "🇧🇪", "quatre": "4️⃣", "banque": "🏦",
+  "musique": "🎵", "informatique": "💻", "fantastique": "✨", "fabrique": "🏭",
+  "six": "6️⃣", "huit": "8️⃣", "lundi": "📅", "lit": "🛏️",
+  "moi": "🙋‍♀️", "trois": "3️⃣", "poisson": "🐟", "oiseau": "🐦",
+  "français": "🇫🇷", "ça va": "👋", "garçon": "👦", "maçon": "👷",
+  "juillet": "☀️", "stylo à bille": "🖊️", "famille": "👨‍👩‍👧", "fille": "👧",
+  "yeux": "👀", "deux": "2️⃣", "feux": "🔥",
+  "la philosophie": "🤔", "Philippe": "👨", "la pharmacie": "💊", "la photographie": "📷",
+  "un chat": "🐈", "un chanteur": "🎤", "une chose": "📦", "un chocolat": "🍫",
+  "un champignon": "🍄", "une ligne": "📏", "mignon": "🥰", "gagner": "🏆",
+  "Allemagne": "🇩🇪", "campagne": "🌾", "montagne": "🏔️", "ligne": "➖",
+  "ans": "🎂", "janvier": "🎆", "blanc": "⚪", "France": "🇫🇷",
+  "beau": "😎", "gâteau": "🎂", "bureau": "🏢",
+  "vendredi": "📆", "vent": "💨", "ennuyeux": "😑", "cent": "💯",
+  "cinq": "5️⃣", "vingt": "2️⃣0️⃣", "lapin": "🐰", "juin": "🌻",
+  "une bague": "💍", "guiche": "💇‍♂️", "guitare": "🎸", "vague": "🌊",
+  "un jeu": "🎮", "peu": "🤏", "bleu": "🔵", "jeudi": "📅",
+  "le soleil": "☀️", "le lait": "🥛", "frais": "🧊", "mais": "🌽",
+  "faux": "❌", "autre": "🔄", "l'eau": "💧",
+  "une roue": "🎡", "un cou": "🦒", "fou": "🤪", "ouvrir": "🔓",
+  "une voiture": "🚗", "un oiseau": "🐦", "froid": "🥶"
+};
+function getEmoji(fr) {
+  return EMOJIS[fr] || "📝";
+}
+
+// =============================================================
+//  🎨 MODO VISUAL (emoji + palabra grande)
+// =============================================================
+function renderVisual(root) {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <div class="section-title">🎨 Aprende con imágenes</div>
+    <div style="text-align:center;color:var(--muted);margin-bottom:14px;font-size:14px;">
+      Asocia cada palabra con su emoji. El cerebro recuerda mejor con imágenes 🧠
+    </div>
+  `;
+  const grid = document.createElement("div");
+  grid.style.display = "grid";
+  grid.style.gridTemplateColumns = "repeat(auto-fill, minmax(160px, 1fr))";
+  grid.style.gap = "12px";
+
+  DATA.forEach(item => {
+    item.words.forEach(w => {
+      const card = document.createElement("div");
+      card.style.cssText = `
+        background:#fff;border-radius:14px;padding:14px 10px;box-shadow:var(--shadow);
+        text-align:center;cursor:pointer;transition:transform .15s;
+        border-top:5px solid ${item.color || '#2563eb'};
+      `;
+      card.innerHTML = `
+        <div style="font-size:48px;">${getEmoji(w.fr)}</div>
+        <div style="font-weight:800;font-size:18px;margin-top:4px;">${highlight(w.fr, item.combo)}</div>
+        <div style="color:var(--muted);font-size:12px;">${w.es}</div>
+        <div style="background:${item.color || '#e5e7eb'};color:#374151;display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-top:6px;">${item.combo} → ${item.sound}</div>
+        <div style="margin-top:6px;">
+          <button onclick="event.stopPropagation();speak('${w.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-size:14px;cursor:pointer;">🔊</button>
+        </div>
+      `;
+      card.onmouseover = () => card.style.transform = "translateY(-4px) scale(1.03)";
+      card.onmouseout = () => card.style.transform = "";
+      card.onclick = () => { speak(w.fr); markSeen(item.combo); };
+      grid.appendChild(card);
+    });
+  });
+  wrap.appendChild(grid);
+  root.appendChild(wrap);
+}
+
+// =============================================================
+//  🎮 MODO PAREJAS (memoria: empareja emoji con palabra)
+// =============================================================
+function renderMatch(root) {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <div class="section-title">🎮 Juego de Parejas</div>
+    <div style="text-align:center;color:var(--muted);margin-bottom:10px;font-size:14px;">
+      Empareja cada <b>emoji</b> con su <b>palabra en francés</b>. ¡Clic en dos para emparejar!
+    </div>
+    <div style="text-align:center;margin-bottom:10px;">
+      <span id="matchScore" style="font-weight:700;margin-right:12px;">Parejas: 0 / 6</span>
+      <span id="matchTries" style="color:var(--muted);">Intentos: 0</span>
+      <button id="matchReset" style="margin-left:10px;background:#111;color:#fff;border:0;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:600;">🔄 Nueva partida</button>
+    </div>
+    <div id="matchBoard" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:500px;margin:0 auto;"></div>
+  `;
+  root.appendChild(wrap);
+
+  const allWords = [];
+  DATA.forEach(d => d.words.forEach(w => allWords.push({ fr: w.fr, emoji: getEmoji(w.fr) })));
+  let board, flipped = [], matched = 0, tries = 0, locked = false;
+
+  function setup() {
+    const picks = shuffle(allWords).slice(0, 6);
+    board = shuffle([
+      ...picks.map(p => ({ type: "emoji", value: p.emoji, key: p.fr })),
+      ...picks.map(p => ({ type: "word", value: p.fr, key: p.fr }))
+    ]);
+    matched = 0; tries = 0; flipped = []; locked = false;
+    draw();
+  }
+
+  function draw() {
+    const el = document.getElementById("matchBoard");
+    el.innerHTML = "";
+    board.forEach((c, i) => {
+      const div = document.createElement("div");
+      div.dataset.i = i;
+      div.style.cssText = `
+        background:${c.revealed || c.done ? "#fff" : "linear-gradient(135deg,#6366f1,#8b5cf6)"};
+        color:${c.revealed || c.done ? "#111" : "#fff"};
+        height:90px;display:flex;align-items:center;justify-content:center;
+        border-radius:12px;cursor:${c.done ? "default" : "pointer"};
+        font-size:${c.type === "emoji" ? "40px" : "15px"};
+        font-weight:700;text-align:center;padding:4px;
+        box-shadow:var(--shadow);user-select:none;
+        opacity:${c.done ? "0.4" : "1"};
+        transition:transform .2s;
+      `;
+      div.textContent = (c.revealed || c.done) ? c.value : "?";
+      if (!c.done) div.onclick = () => flip(i);
+      el.appendChild(div);
+    });
+    document.getElementById("matchScore").textContent = `Parejas: ${matched} / 6`;
+    document.getElementById("matchTries").textContent = `Intentos: ${tries}`;
+    if (matched === 6) {
+      setTimeout(() => {
+        alert(`🎉 ¡Ganaste! ${tries} intentos.\n+${Math.max(30 - tries, 5)} puntos`);
+        state.points += Math.max(30 - tries, 5);
+        saveProgress();
+      }, 400);
+    }
+  }
+
+  function flip(i) {
+    if (locked) return;
+    const c = board[i];
+    if (c.revealed || c.done) return;
+    c.revealed = true;
+    if (c.type === "word") speak(c.value);
+    flipped.push(i);
+    draw();
+    if (flipped.length === 2) {
+      tries++;
+      locked = true;
+      const [a, b] = flipped;
+      if (board[a].key === board[b].key && board[a].type !== board[b].type) {
+        setTimeout(() => {
+          board[a].done = true; board[b].done = true;
+          flipped = []; locked = false; matched++;
+          state.points += 3; saveProgress();
+          draw();
+        }, 600);
+      } else {
+        setTimeout(() => {
+          board[a].revealed = false; board[b].revealed = false;
+          flipped = []; locked = false;
+          draw();
+        }, 1000);
+      }
+    }
+  }
+
+  document.getElementById("matchReset").onclick = setup;
+  setup();
+}
+
+// =============================================================
+//  🏆 MODO RETOS
+// =============================================================
+const CHALLENGES = [
+  {
+    id: "speed10",
+    icon: "⚡",
+    name: "Relámpago",
+    desc: "Acierta 10 sonidos en 60 segundos. ¡Sin parar!",
+    level: "Fácil",
+    color: "#fde68a",
+    run: runSpeedChallenge
+  },
+  {
+    id: "perfect5",
+    icon: "🎯",
+    name: "Puntería Perfecta",
+    desc: "5 respuestas seguidas sin fallar. Un solo error = reinicias.",
+    level: "Medio",
+    color: "#bfdbfe",
+    run: runPerfectChallenge
+  },
+  {
+    id: "listen",
+    icon: "👂",
+    name: "Oído Francés",
+    desc: "Escucha 8 palabras y escríbelas correctamente.",
+    level: "Medio",
+    color: "#c7d2fe",
+    run: runListenChallenge
+  },
+  {
+    id: "memory",
+    icon: "🧠",
+    name: "Memoria",
+    desc: "Memoriza 5 palabras mostradas 5 segundos. Luego escríbelas.",
+    level: "Difícil",
+    color: "#fecaca",
+    run: runMemoryChallenge
+  },
+  {
+    id: "mix20",
+    icon: "🔥",
+    name: "Maratón Mixto",
+    desc: "20 preguntas combinadas (sonido + palabra + escribir). ¡Desafío final!",
+    level: "Experto",
+    color: "#fbcfe8",
+    run: runMarathonChallenge
+  },
+  {
+    id: "daily",
+    icon: "📅",
+    name: "Reto Diario",
+    desc: "10 retos aleatorios del día. Se renueva cada 24 horas.",
+    level: "Variable",
+    color: "#d1fae5",
+    run: runDailyChallenge
+  }
+];
+
+function getChallengeRecord(id) {
+  const data = JSON.parse(localStorage.getItem("fr_challenges") || "{}");
+  return data[id] || { done: 0, best: null };
+}
+function saveChallengeRecord(id, result) {
+  const data = JSON.parse(localStorage.getItem("fr_challenges") || "{}");
+  const prev = data[id] || { done: 0, best: null };
+  data[id] = {
+    done: prev.done + 1,
+    best: result.better ? result.score : prev.best,
+    lastPlayed: new Date().toISOString()
+  };
+  if (result.better || prev.best === null) data[id].best = result.score;
+  localStorage.setItem("fr_challenges", JSON.stringify(data));
+}
+
+function renderChallenges(root) {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <div class="section-title">🏆 Retos de práctica</div>
+    <div style="text-align:center;color:var(--muted);margin-bottom:14px;font-size:14px;">
+      Elige un reto. ¡Gana medallas y sube tus récords!
+    </div>
+  `;
+  const grid = document.createElement("div");
+  grid.className = "grid";
+  CHALLENGES.forEach(ch => {
+    const rec = getChallengeRecord(ch.id);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.borderTopColor = ch.color;
+    card.innerHTML = `
+      <div style="font-size:42px;text-align:center;">${ch.icon}</div>
+      <div style="font-weight:800;font-size:18px;text-align:center;">${ch.name}</div>
+      <div style="background:${ch.color};color:#374151;display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;margin:4px auto;text-align:center;align-self:center;">${ch.level}</div>
+      <div style="font-size:13px;color:#4b5563;text-align:center;min-height:52px;">${ch.desc}</div>
+      <div style="border-top:1px solid #eee;padding-top:8px;margin-top:4px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;">
+        <span>Jugado: <b>${rec.done}</b></span>
+        <span>Mejor: <b>${rec.best !== null ? rec.best : "—"}</b></span>
+      </div>
+      <button style="margin-top:6px;background:#111;color:#fff;border:0;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;">▶ Empezar</button>
+    `;
+    card.querySelector("button").addEventListener("click", (e) => {
+      e.stopPropagation();
+      ch.run();
+    });
+    grid.appendChild(card);
+  });
+  wrap.appendChild(grid);
+  root.appendChild(wrap);
+}
+
+// ---- helpers UI reto ----
+function challengeShell(titleHtml, bodyId = "chBody") {
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div style="max-width:620px;margin:0 auto;">
+      <button onclick="state.mode='challenges'; render();" style="background:#e5e7eb;border:0;padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;margin-bottom:10px;">← Volver a retos</button>
+      <div class="quiz-card">
+        <div style="font-size:20px;font-weight:800;margin-bottom:10px;">${titleHtml}</div>
+        <div id="${bodyId}"></div>
+      </div>
+    </div>
+  `;
+  return document.getElementById(bodyId);
+}
+
+function showChallengeResult(body, { title, score, best, better, points, message }) {
+  state.points += points;
+  saveProgress();
+  body.innerHTML = `
+    <div style="text-align:center;padding:20px;">
+      <div style="font-size:60px;">${better ? "🏆" : "✅"}</div>
+      <div style="font-size:24px;font-weight:800;margin:6px 0;">${title}</div>
+      <div style="font-size:40px;font-weight:900;color:var(--accent);">${score}</div>
+      ${better ? `<div style="color:var(--good);font-weight:700;">¡Nuevo récord! 🎉</div>` : (best !== null ? `<div style="color:var(--muted);">Tu récord: <b>${best}</b></div>` : "")}
+      <div style="margin-top:10px;color:var(--muted);">${message || ""}</div>
+      <div style="margin-top:14px;font-weight:700;">+${points} puntos ganados</div>
+    </div>
+  `;
+}
+
+// ---- Reto 1: Relámpago ⚡ (60s, todos los sonidos que pueda) ----
+function runSpeedChallenge() {
+  const body = challengeShell("⚡ Relámpago — 60 segundos");
+  let score = 0, timeLeft = 60, finished = false;
+  const startTime = Date.now();
+
+  const next = () => {
+    if (finished) return;
+    const correct = DATA[Math.floor(Math.random() * DATA.length)];
+    const distractors = shuffle(DATA.filter(d => d.combo !== correct.combo)).slice(0, 3);
+    const options = shuffle([correct, ...distractors]);
+    body.innerHTML = `
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-weight:700;">
+        <span>⏱️ <span id="tLeft">${timeLeft}</span>s</span>
+        <span>✅ ${score}</span>
+      </div>
+      <div style="font-size:14px;color:var(--muted);">¿Qué sonido tiene?</div>
+      <div style="font-size:56px;font-weight:900;margin:10px 0;color:${darken(correct.color || '#2563eb', 30)};">${correct.combo}</div>
+      <div class="options">
+        ${options.map(o => `<button data-c="${o.combo === correct.combo ? 1 : 0}">${o.sound}</button>`).join("")}
+      </div>
+    `;
+    body.querySelectorAll(".options button").forEach(b => {
+      b.onclick = () => {
+        if (b.dataset.c === "1") { score++; next(); }
+        else { b.classList.add("wrong"); setTimeout(next, 400); }
+      };
+    });
+  };
+
+  const timer = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById("tLeft");
+    if (el) el.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      finished = true;
+      const rec = getChallengeRecord("speed10");
+      const better = rec.best === null || score > rec.best;
+      saveChallengeRecord("speed10", { score, better });
+      showChallengeResult(body, {
+        title: "¡Tiempo!",
+        score: `${score} aciertos`,
+        best: rec.best,
+        better,
+        points: score * 2,
+        message: score >= 10 ? "¡Superaste la meta de 10! Excelente velocidad 🔥" : "Sigue practicando, cada vez más rápido."
+      });
+    }
+  }, 1000);
+  next();
+}
+
+// ---- Reto 2: Puntería Perfecta 🎯 (5 seguidos sin fallar) ----
+function runPerfectChallenge() {
+  const body = challengeShell("🎯 Puntería Perfecta — 5 sin fallar");
+  let streak = 0, totalTries = 0, finished = false;
+
+  const next = () => {
+    if (finished) return;
+    const correct = DATA[Math.floor(Math.random() * DATA.length)];
+    const word = correct.words[Math.floor(Math.random() * correct.words.length)];
+    const distractors = shuffle(DATA.filter(d => d.combo !== correct.combo)).slice(0, 3);
+    const options = shuffle([correct, ...distractors]);
+    body.innerHTML = `
+      <div style="margin-bottom:10px;font-weight:700;">Racha: ${"⭐".repeat(streak)}${"·".repeat(5 - streak)}</div>
+      <div style="font-size:14px;color:var(--muted);">¿Qué combinación hay en esta palabra?</div>
+      <div style="font-size:34px;font-weight:800;margin:12px 0;">${word.fr}
+        <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-size:16px;cursor:pointer;">🔊</button>
+      </div>
+      <div style="color:var(--muted);font-size:13px;margin-top:-8px;">(${word.es})</div>
+      <div class="options" style="margin-top:10px;">
+        ${options.map(o => `<button data-c="${o.combo === correct.combo ? 1 : 0}">${o.combo}</button>`).join("")}
+      </div>
+      <div id="pfb" class="feedback"></div>
+    `;
+    speak(word.fr);
+    body.querySelectorAll(".options button").forEach(b => {
+      b.onclick = () => {
+        totalTries++;
+        if (b.dataset.c === "1") {
+          streak++;
+          b.classList.add("correct");
+          if (streak >= 5) {
+            finished = true;
+            const rec = getChallengeRecord("perfect5");
+            const better = rec.best === null || totalTries < rec.best;
+            saveChallengeRecord("perfect5", { score: totalTries, better });
+            setTimeout(() => showChallengeResult(body, {
+              title: "¡5 perfectos!",
+              score: `en ${totalTries} intentos`,
+              best: rec.best,
+              better,
+              points: 25,
+              message: totalTries === 5 ? "¡5 de 5 sin errores! Increíble 👑" : "¡Lograste los 5 seguidos al final!"
+            }), 600);
+          } else setTimeout(next, 500);
+        } else {
+          b.classList.add("wrong");
+          body.querySelectorAll(".options button").forEach(x => { if (x.dataset.c === "1") x.classList.add("correct"); });
+          document.getElementById("pfb").innerHTML = `<span class="ko">¡Racha rota! Era <b>${correct.combo}</b>. ${correct.mnemo}</span>`;
+          streak = 0;
+          setTimeout(next, 2200);
+        }
+      };
+    });
+  };
+  next();
+}
+
+// ---- Reto 3: Oído Francés 👂 (8 dictados) ----
+function runListenChallenge() {
+  const body = challengeShell("👂 Oído Francés — 8 dictados");
+  let idx = 0, correct = 0;
+  const total = 8;
+  const picks = shuffle(DATA).slice(0, total).map(d => ({
+    item: d,
+    word: d.words[Math.floor(Math.random() * d.words.length)]
+  }));
+
+  const ask = () => {
+    if (idx >= total) {
+      const rec = getChallengeRecord("listen");
+      const better = rec.best === null || correct > rec.best;
+      saveChallengeRecord("listen", { score: correct, better });
+      showChallengeResult(body, {
+        title: "¡Dictado terminado!",
+        score: `${correct} / ${total}`,
+        best: rec.best,
+        better,
+        points: correct * 3,
+        message: correct === total ? "¡Perfecto! Oído francés afinado 🎧" : "Escucha varias veces antes de escribir."
+      });
+      return;
+    }
+    const { item, word } = picks[idx];
+    body.innerHTML = `
+      <div style="margin-bottom:10px;font-weight:700;">Palabra ${idx + 1} / ${total} · ✅ ${correct}</div>
+      <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:14px 22px;border-radius:12px;font-size:18px;cursor:pointer;">🔊 Escuchar (puedes repetir)</button>
+      <div style="margin-top:10px;color:var(--muted);font-size:13px;">Significado: <b>${word.es}</b> · Pista: contiene <b>${item.combo}</b></div>
+      <input id="ltIn" autocomplete="off" spellcheck="false" placeholder="Escribe en francés..." style="padding:12px;font-size:20px;border:2px solid #e5e7eb;border-radius:10px;text-align:center;width:85%;margin-top:14px;" />
+      <div class="type-hint">Enter para comprobar</div>
+      <div id="ltFb" class="feedback"></div>
+    `;
+    setTimeout(() => speak(word.fr), 300);
+    const input = document.getElementById("ltIn");
+    input.focus();
+    input.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+      const ok = normalize(input.value) === normalize(word.fr);
+      if (ok) { correct++; document.getElementById("ltFb").innerHTML = `<span class="ok">¡Bien! ✓</span>`; }
+      else document.getElementById("ltFb").innerHTML = `<span class="ko">Era: <b>${word.fr}</b></span>`;
+      input.disabled = true;
+      idx++;
+      setTimeout(ask, 1200);
+    });
+  };
+  ask();
+}
+
+// ---- Reto 4: Memoria 🧠 (ver 5 palabras y escribirlas) ----
+function runMemoryChallenge() {
+  const body = challengeShell("🧠 Memoria — memoriza y escribe");
+  const picks = shuffle(DATA).slice(0, 5).map(d => d.words[Math.floor(Math.random() * d.words.length)]);
+  let seconds = 8;
+  body.innerHTML = `
+    <div style="font-size:14px;color:var(--muted);">Memoriza estas 5 palabras (${seconds}s):</div>
+    <div style="font-size:26px;font-weight:800;margin:16px 0;line-height:1.6;">
+      ${picks.map(p => p.fr).join("<br>")}
+    </div>
+    <div style="font-size:48px;font-weight:900;color:var(--accent);" id="memT">${seconds}</div>
+  `;
+  const tick = setInterval(() => {
+    seconds--;
+    const el = document.getElementById("memT");
+    if (el) el.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(tick);
+      askMemory(body, picks);
+    }
+  }, 1000);
+}
+function askMemory(body, picks) {
+  body.innerHTML = `
+    <div style="font-weight:700;margin-bottom:10px;">Escribe las 5 palabras que viste (en cualquier orden):</div>
+    ${[0,1,2,3,4].map(i => `<input data-i="${i}" autocomplete="off" spellcheck="false" placeholder="Palabra ${i+1}" style="padding:10px;font-size:18px;border:2px solid #e5e7eb;border-radius:10px;width:85%;margin:4px 0;display:block;margin-left:auto;margin-right:auto;" />`).join("")}
+    <button id="memCheck" style="margin-top:12px;background:#111;color:#fff;border:0;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;">Comprobar</button>
+  `;
+  body.querySelector('input[data-i="0"]').focus();
+  document.getElementById("memCheck").onclick = () => {
+    const answers = [...body.querySelectorAll("input")].map(i => normalize(i.value));
+    const target = picks.map(p => normalize(p.fr));
+    let hits = 0;
+    answers.forEach(a => { if (a && target.includes(a)) hits++; });
+    const rec = getChallengeRecord("memory");
+    const better = rec.best === null || hits > rec.best;
+    saveChallengeRecord("memory", { score: hits, better });
+    showChallengeResult(body, {
+      title: `Recordaste ${hits} / 5`,
+      score: `${hits} / 5`,
+      best: rec.best,
+      better,
+      points: hits * 4,
+      message: `Las correctas eran: <b>${picks.map(p => p.fr).join(", ")}</b>`
+    });
+  };
+}
+
+// ---- Reto 5: Maratón Mixto 🔥 (20 preguntas variadas) ----
+function runMarathonChallenge() {
+  const body = challengeShell("🔥 Maratón Mixto — 20 preguntas");
+  const total = 20;
+  let idx = 0, correct = 0;
+
+  const ask = () => {
+    if (idx >= total) {
+      const rec = getChallengeRecord("mix20");
+      const better = rec.best === null || correct > rec.best;
+      saveChallengeRecord("mix20", { score: correct, better });
+      const stars = correct >= 18 ? "🏆🏆🏆" : correct >= 15 ? "🏆🏆" : correct >= 10 ? "🏆" : "💪";
+      showChallengeResult(body, {
+        title: `Maratón completado ${stars}`,
+        score: `${correct} / ${total}`,
+        best: rec.best,
+        better,
+        points: correct * 2,
+        message: correct >= 18 ? "¡Casi perfecto! Nivel experto 👑" : "Cada intento te acerca al dominio."
+      });
+      return;
+    }
+    const kind = ["sound", "word", "type"][Math.floor(Math.random() * 3)];
+    const item = DATA[Math.floor(Math.random() * DATA.length)];
+    const word = item.words[Math.floor(Math.random() * item.words.length)];
+
+    if (kind === "type") {
+      body.innerHTML = `
+        <div style="font-weight:700;margin-bottom:8px;">Pregunta ${idx+1}/${total} · ✅ ${correct}</div>
+        <div style="color:var(--muted);font-size:14px;">Escucha y escribe:</div>
+        <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:10px 16px;border-radius:10px;margin-top:8px;cursor:pointer;">🔊 Escuchar</button>
+        <div style="color:var(--muted);font-size:13px;margin-top:6px;">(${word.es})</div>
+        <input id="mxIn" autocomplete="off" spellcheck="false" style="padding:10px;font-size:18px;border:2px solid #e5e7eb;border-radius:10px;width:85%;margin-top:10px;text-align:center;" />
+        <div class="type-hint">Enter para comprobar</div>
+      `;
+      setTimeout(() => speak(word.fr), 200);
+      const input = document.getElementById("mxIn");
+      input.focus();
+      input.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        if (normalize(input.value) === normalize(word.fr)) correct++;
+        idx++; setTimeout(ask, 500);
+      });
+    } else {
+      const distractors = shuffle(DATA.filter(d => d.combo !== item.combo)).slice(0, 3);
+      const options = shuffle([item, ...distractors]);
+      const promptHtml = kind === "sound"
+        ? `<div style="font-size:14px;color:var(--muted);">¿Qué sonido tiene?</div><div style="font-size:48px;font-weight:900;margin:10px 0;color:${darken(item.color || '#2563eb',30)};">${item.combo}</div>`
+        : `<div style="font-size:14px;color:var(--muted);">¿Qué combinación hay?</div><div style="font-size:28px;font-weight:800;margin:10px 0;">${word.fr} <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:4px 8px;border-radius:6px;cursor:pointer;">🔊</button></div>`;
+      body.innerHTML = `
+        <div style="font-weight:700;margin-bottom:8px;">Pregunta ${idx+1}/${total} · ✅ ${correct}</div>
+        ${promptHtml}
+        <div class="options">
+          ${options.map(o => `<button data-c="${o.combo === item.combo ? 1 : 0}">${kind === "sound" ? o.sound : o.combo}</button>`).join("")}
+        </div>
+      `;
+      if (kind === "word") speak(word.fr);
+      body.querySelectorAll(".options button").forEach(b => {
+        b.onclick = () => {
+          if (b.dataset.c === "1") { correct++; b.classList.add("correct"); }
+          else {
+            b.classList.add("wrong");
+            body.querySelectorAll(".options button").forEach(x => { if (x.dataset.c === "1") x.classList.add("correct"); });
+          }
+          idx++;
+          setTimeout(ask, 600);
+        };
+      });
+    }
+  };
+  ask();
+}
+
+// ---- Reto 6: Diario 📅 (10 preguntas fijas por día) ----
+function runDailyChallenge() {
+  const body = challengeShell("📅 Reto Diario — 10 preguntas del día");
+  const todayKey = new Date().toISOString().slice(0, 10);
+  let seed = 0;
+  for (let i = 0; i < todayKey.length; i++) seed = (seed * 31 + todayKey.charCodeAt(i)) >>> 0;
+  const rand = () => { seed = (seed * 1103515245 + 12345) >>> 0; return seed / 0xFFFFFFFF; };
+  const picks = [];
+  const pool = [...DATA];
+  for (let i = 0; i < 10 && pool.length > 0; i++) {
+    const j = Math.floor(rand() * pool.length);
+    picks.push(pool.splice(j, 1)[0]);
+  }
+  const lastDaily = JSON.parse(localStorage.getItem("fr_daily") || "{}");
+  if (lastDaily.date === todayKey && lastDaily.done) {
+    body.innerHTML = `
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:50px;">✅</div>
+        <div style="font-size:22px;font-weight:800;">Ya completaste el reto de hoy</div>
+        <div style="margin-top:8px;">Puntaje: <b>${lastDaily.score}/10</b></div>
+        <div style="color:var(--muted);margin-top:6px;">Vuelve mañana para nuevas preguntas 🗓️</div>
+        <button onclick="state.mode='challenges';render();" style="margin-top:14px;background:#111;color:#fff;border:0;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer;">Volver</button>
+      </div>`;
+    return;
+  }
+  let idx = 0, correct = 0;
+  const ask = () => {
+    if (idx >= 10) {
+      localStorage.setItem("fr_daily", JSON.stringify({ date: todayKey, done: true, score: correct }));
+      const rec = getChallengeRecord("daily");
+      const better = rec.best === null || correct > rec.best;
+      saveChallengeRecord("daily", { score: correct, better });
+      showChallengeResult(body, {
+        title: "¡Reto diario completo!",
+        score: `${correct} / 10`,
+        best: rec.best,
+        better,
+        points: correct * 3 + 10,
+        message: "Vuelve mañana para un nuevo reto 🌅"
+      });
+      return;
+    }
+    const item = picks[idx];
+    const word = item.words[Math.floor(Math.random() * item.words.length)];
+    const distractors = shuffle(DATA.filter(d => d.combo !== item.combo)).slice(0, 3);
+    const options = shuffle([item, ...distractors]);
+    body.innerHTML = `
+      <div style="font-weight:700;margin-bottom:8px;">Pregunta ${idx+1}/10 · ✅ ${correct}</div>
+      <div style="font-size:14px;color:var(--muted);">¿Qué combinación contiene?</div>
+      <div style="font-size:30px;font-weight:800;margin:10px 0;">${word.fr}
+        <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:4px 8px;border-radius:6px;cursor:pointer;">🔊</button>
+      </div>
+      <div style="color:var(--muted);font-size:13px;">(${word.es})</div>
+      <div class="options" style="margin-top:10px;">
+        ${options.map(o => `<button data-c="${o.combo === item.combo ? 1 : 0}">${o.combo}</button>`).join("")}
+      </div>
+    `;
+    speak(word.fr);
+    body.querySelectorAll(".options button").forEach(b => {
+      b.onclick = () => {
+        if (b.dataset.c === "1") { correct++; b.classList.add("correct"); }
+        else {
+          b.classList.add("wrong");
+          body.querySelectorAll(".options button").forEach(x => { if (x.dataset.c === "1") x.classList.add("correct"); });
+        }
+        idx++; setTimeout(ask, 700);
+      };
+    });
+  };
+  ask();
+}
+
+function normalize(s) {
+  return s.toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "") // quita tildes para ser indulgente
+    .replace(/[^a-zñç\s']/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// =============================================================
+//  INIT
+// =============================================================
+saveProgress();
+render();
+</script>
+
+</body>
+</html>
