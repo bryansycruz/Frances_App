@@ -9,6 +9,7 @@ env/
 # Editores / IDEs
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
