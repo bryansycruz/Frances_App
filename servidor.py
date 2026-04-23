@@ -20,26 +20,39 @@ import os
 import sys
 
 PORT = 8000
+HOST = "127.0.0.1"  # solo local — nunca exponer a la red
+
+class LocalOnlyHandler(http.server.SimpleHTTPRequestHandler):
+    """Handler con cabeceras de seguridad y solo para conexiones locales."""
+
+    def end_headers(self):
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
+    def log_message(self, fmt, *args):
+        sys.stdout.write("[%s] %s\n" % (self.log_date_time_string(), fmt % args))
 
 def main():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    handler = http.server.SimpleHTTPRequestHandler
-
     try:
-        with socketserver.TCPServer(("", PORT), handler) as httpd:
-            url = f"http://localhost:{PORT}"
+        with socketserver.TCPServer((HOST, PORT), LocalOnlyHandler) as httpd:
+            url = f"http://{HOST}:{PORT}"
             print("=" * 50)
-            print("  Francais Facil - Servidor local")
+            print("  Francais Facil - Servidor local (solo tu PC)")
             print("=" * 50)
             print(f"  Servidor corriendo en: {url}")
+            print(f"  Acceso restringido a localhost (no red)")
             print(f"  Presiona Ctrl+C para detenerlo")
             print("=" * 50)
             webbrowser.open(url)
             httpd.serve_forever()
     except OSError as e:
-        if e.errno == 10048 or "Address already in use" in str(e):
+        if getattr(e, "errno", None) == 10048 or "Address already in use" in str(e):
             print(f"El puerto {PORT} ya esta en uso.")
-            print(f"Abre http://localhost:{PORT} en tu navegador,")
+            print(f"Abre http://{HOST}:{PORT} en tu navegador,")
             print("o cierra el otro programa y vuelve a intentar.")
         else:
             raise

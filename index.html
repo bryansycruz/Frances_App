@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none';" />
+<meta name="referrer" content="no-referrer" />
 <title>Français Fácil - Aprende combinaciones de letras y vocales</title>
 <style>
   :root {
@@ -601,6 +603,28 @@ const DATA = [
 ];
 
 // =============================================================
+//  SEGURIDAD: escape de HTML y atributos
+// =============================================================
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+// escapa para usar dentro de atributos JS tipo onclick="speak('...')"
+// No recomendado — preferible usar addEventListener. Mantenido por compatibilidad.
+function escapeJsAttr(s) {
+  return String(s)
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "\\x3C")
+    .replace(/>/g, "\\x3E");
+}
+
+// =============================================================
 //  ESTADO / PROGRESO
 // =============================================================
 const state = {
@@ -643,6 +667,7 @@ if (typeof speechSynthesis !== "undefined") {
 }
 function speak(text) {
   if (!("speechSynthesis" in window)) return;
+  if (typeof text !== "string") return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "fr-FR";
@@ -650,6 +675,22 @@ function speak(text) {
   u.rate = 0.9;
   speechSynthesis.speak(u);
 }
+
+// Listener delegado global: cualquier botón con data-say reproduce el texto.
+// Esto evita inyección por onclick="speak('...')" inline.
+document.addEventListener("click", (e) => {
+  const sayBtn = e.target.closest("[data-say]");
+  if (sayBtn) {
+    e.stopPropagation();
+    speak(sayBtn.getAttribute("data-say"));
+    return;
+  }
+  const masterBtn = e.target.closest("[data-mastered]");
+  if (masterBtn) {
+    e.stopPropagation();
+    markMastered(masterBtn.getAttribute("data-mastered"));
+  }
+});
 
 // =============================================================
 //  NAVEGACIÓN DE MODOS
@@ -756,13 +797,13 @@ function openModal(item) {
               <div class="es">${w.es}</div>
             </div>
           </div>
-          <button onclick="speak('${w.fr.replace(/'/g, "\\'")}')" title="Escuchar">🔊</button>
+          <button data-say="${escapeHtml(w.fr)}" title="Escuchar">🔊</button>
         </div>
       `).join("")}
     </div>
     <div style="text-align:center; margin-top:14px;">
       <button class="btn-easy" style="padding:10px 18px; font-weight:700; border:0; border-radius:10px; cursor:pointer;"
-        onclick="markMastered('${item.combo.replace(/'/g, "\\'")}')">¡Ya me lo sé! ⭐</button>
+        data-mastered="${escapeHtml(item.combo)}">¡Ya me lo sé! ⭐</button>
     </div>
   `;
   bg.classList.add("open");
@@ -779,8 +820,8 @@ function markMastered(combo) {
   saveProgress();
   closeModal();
 }
-window.markMastered = markMastered;
-window.speak = speak;
+// Ya no se exponen a window — los botones usan data-say / data-mastered
+// con un listener delegado global (ver arriba).
 
 // ---------- FLASHCARDS ----------
 function shuffle(arr) {
@@ -814,7 +855,7 @@ function renderFlash(root) {
           ${item.words.slice(0, 3).map(w => `<li style="padding:4px 0;font-size:16px;"><span style="font-size:24px;margin-right:8px;">${getEmoji(w.fr)}</span><b>${w.fr}</b> — <span style="color:var(--muted);">${w.es}</span></li>`).join("")}
         </ul>
         <div style="text-align:center; margin-top:8px;">
-          <button onclick="speak('${item.words[0].fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;">🔊 Escuchar ejemplo</button>
+          <button data-say="${escapeHtml(item.words[0].fr)}" style="background:#2563eb;color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;">🔊 Escuchar ejemplo</button>
         </div>
       </div>
     </div>
@@ -875,8 +916,8 @@ function renderQuiz(root, kind) {
 
   const centerBig = kind === "sound"
     ? `<div class="big-word" style="color:${darken(correct.color || '#2563eb', 30)}">${correct.combo}</div>`
-    : `<div class="big-word">${word.fr} <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:18px;">🔊</button></div>
-       <div style="color:var(--muted);font-size:14px;margin-top:-10px;">(${word.es})</div>`;
+    : `<div class="big-word">${escapeHtml(word.fr)} <button data-say="${escapeHtml(word.fr)}" style="background:#2563eb;color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:18px;">🔊</button></div>
+       <div style="color:var(--muted);font-size:14px;margin-top:-10px;">(${escapeHtml(word.es)})</div>`;
 
   const optionHtml = options.map(o => {
     const label = kind === "sound" ? o.sound : o.combo;
@@ -942,7 +983,7 @@ function renderTyping(root) {
   wrap.innerHTML = `
     <div style="color:var(--muted); font-size:14px;">Escucha y escribe la palabra en francés:</div>
     <div style="margin-top:10px;">
-      <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:12px 18px;border-radius:10px;cursor:pointer;font-size:18px;">🔊 Escuchar</button>
+      <button data-say="${escapeHtml(word.fr)}" style="background:#2563eb;color:#fff;border:0;padding:12px 18px;border-radius:10px;cursor:pointer;font-size:18px;">🔊 Escuchar</button>
     </div>
     <div style="margin-top:12px; color:var(--muted); font-size:14px;">Significado: <b>${word.es}</b></div>
     <div style="margin-top:4px; font-size:12px; color:var(--muted);">Pista: contiene <b>${item.combo}</b> (${item.sound})</div>
@@ -1044,7 +1085,7 @@ function renderVisual(root) {
         <div style="color:var(--muted);font-size:12px;">${w.es}</div>
         <div style="background:${item.color || '#e5e7eb'};color:#374151;display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-top:6px;">${item.combo} → ${item.sound}</div>
         <div style="margin-top:6px;">
-          <button onclick="event.stopPropagation();speak('${w.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-size:14px;cursor:pointer;">🔊</button>
+          <button data-say="${escapeHtml(w.fr)}" style="background:#2563eb;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-size:14px;cursor:pointer;">🔊</button>
         </div>
       `;
       card.onmouseover = () => card.style.transform = "translateY(-4px) scale(1.03)";
@@ -1115,9 +1156,13 @@ function renderMatch(root) {
     document.getElementById("matchTries").textContent = `Intentos: ${tries}`;
     if (matched === 6) {
       setTimeout(() => {
-        alert(`🎉 ¡Ganaste! ${tries} intentos.\n+${Math.max(30 - tries, 5)} puntos`);
-        state.points += Math.max(30 - tries, 5);
+        const bonus = Math.max(30 - tries, 5);
+        state.points += bonus;
         saveProgress();
+        const msg = document.createElement("div");
+        msg.style.cssText = "text-align:center;margin-top:14px;padding:14px;background:#d1fae5;border-radius:12px;font-weight:700;color:#065f46;";
+        msg.textContent = `🎉 ¡Ganaste en ${tries} intentos! +${bonus} puntos`;
+        document.getElementById("matchBoard").after(msg);
       }, 400);
     }
   }
@@ -1364,8 +1409,8 @@ function runPerfectChallenge() {
     body.innerHTML = `
       <div style="margin-bottom:10px;font-weight:700;">Racha: ${"⭐".repeat(streak)}${"·".repeat(5 - streak)}</div>
       <div style="font-size:14px;color:var(--muted);">¿Qué combinación hay en esta palabra?</div>
-      <div style="font-size:34px;font-weight:800;margin:12px 0;">${word.fr}
-        <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-size:16px;cursor:pointer;">🔊</button>
+      <div style="font-size:34px;font-weight:800;margin:12px 0;">${escapeHtml(word.fr)}
+        <button data-say="${escapeHtml(word.fr)}" style="background:#2563eb;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-size:16px;cursor:pointer;">🔊</button>
       </div>
       <div style="color:var(--muted);font-size:13px;margin-top:-8px;">(${word.es})</div>
       <div class="options" style="margin-top:10px;">
@@ -1435,7 +1480,7 @@ function runListenChallenge() {
     const { item, word } = picks[idx];
     body.innerHTML = `
       <div style="margin-bottom:10px;font-weight:700;">Palabra ${idx + 1} / ${total} · ✅ ${correct}</div>
-      <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:14px 22px;border-radius:12px;font-size:18px;cursor:pointer;">🔊 Escuchar (puedes repetir)</button>
+      <button data-say="${escapeHtml(word.fr)}" style="background:#2563eb;color:#fff;border:0;padding:14px 22px;border-radius:12px;font-size:18px;cursor:pointer;">🔊 Escuchar (puedes repetir)</button>
       <div style="margin-top:10px;color:var(--muted);font-size:13px;">Significado: <b>${word.es}</b> · Pista: contiene <b>${item.combo}</b></div>
       <input id="ltIn" autocomplete="off" spellcheck="false" placeholder="Escribe en francés..." style="padding:12px;font-size:20px;border:2px solid #e5e7eb;border-radius:10px;text-align:center;width:85%;margin-top:14px;" />
       <div class="type-hint">Enter para comprobar</div>
@@ -1535,7 +1580,7 @@ function runMarathonChallenge() {
       body.innerHTML = `
         <div style="font-weight:700;margin-bottom:8px;">Pregunta ${idx+1}/${total} · ✅ ${correct}</div>
         <div style="color:var(--muted);font-size:14px;">Escucha y escribe:</div>
-        <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:10px 16px;border-radius:10px;margin-top:8px;cursor:pointer;">🔊 Escuchar</button>
+        <button data-say="${escapeHtml(word.fr)}" style="background:#2563eb;color:#fff;border:0;padding:10px 16px;border-radius:10px;margin-top:8px;cursor:pointer;">🔊 Escuchar</button>
         <div style="color:var(--muted);font-size:13px;margin-top:6px;">(${word.es})</div>
         <input id="mxIn" autocomplete="off" spellcheck="false" style="padding:10px;font-size:18px;border:2px solid #e5e7eb;border-radius:10px;width:85%;margin-top:10px;text-align:center;" />
         <div class="type-hint">Enter para comprobar</div>
@@ -1553,7 +1598,7 @@ function runMarathonChallenge() {
       const options = shuffle([item, ...distractors]);
       const promptHtml = kind === "sound"
         ? `<div style="font-size:14px;color:var(--muted);">¿Qué sonido tiene?</div><div style="font-size:48px;font-weight:900;margin:10px 0;color:${darken(item.color || '#2563eb',30)};">${item.combo}</div>`
-        : `<div style="font-size:14px;color:var(--muted);">¿Qué combinación hay?</div><div style="font-size:28px;font-weight:800;margin:10px 0;">${word.fr} <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:4px 8px;border-radius:6px;cursor:pointer;">🔊</button></div>`;
+        : `<div style="font-size:14px;color:var(--muted);">¿Qué combinación hay?</div><div style="font-size:28px;font-weight:800;margin:10px 0;">${escapeHtml(word.fr)} <button data-say="${escapeHtml(word.fr)}" style="background:#2563eb;color:#fff;border:0;padding:4px 8px;border-radius:6px;cursor:pointer;">🔊</button></div>`;
       body.innerHTML = `
         <div style="font-weight:700;margin-bottom:8px;">Pregunta ${idx+1}/${total} · ✅ ${correct}</div>
         ${promptHtml}
@@ -1627,8 +1672,8 @@ function runDailyChallenge() {
     body.innerHTML = `
       <div style="font-weight:700;margin-bottom:8px;">Pregunta ${idx+1}/10 · ✅ ${correct}</div>
       <div style="font-size:14px;color:var(--muted);">¿Qué combinación contiene?</div>
-      <div style="font-size:30px;font-weight:800;margin:10px 0;">${word.fr}
-        <button onclick="speak('${word.fr.replace(/'/g, "\\'")}')" style="background:#2563eb;color:#fff;border:0;padding:4px 8px;border-radius:6px;cursor:pointer;">🔊</button>
+      <div style="font-size:30px;font-weight:800;margin:10px 0;">${escapeHtml(word.fr)}
+        <button data-say="${escapeHtml(word.fr)}" style="background:#2563eb;color:#fff;border:0;padding:4px 8px;border-radius:6px;cursor:pointer;">🔊</button>
       </div>
       <div style="color:var(--muted);font-size:13px;">(${word.es})</div>
       <div class="options" style="margin-top:10px;">

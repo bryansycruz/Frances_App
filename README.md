@@ -51,12 +51,14 @@ Luego abre en tu navegador: `http://localhost:8000`
 La app usa la voz francesa que tu sistema tenga instalada. Si no escuchas nada:
 
 ### En Windows 10/11
+
 1. **Configuración** → **Hora e idioma** → **Idioma**
 2. **Agregar un idioma** → busca **"Francés (Francia)"** → Instalar
 3. Al instalarlo, marca también la opción de **"Texto a voz"**
 4. Reinicia el navegador
 
 ### Navegador recomendado
+
 - ✅ **Google Chrome** o **Microsoft Edge** (mejor soporte de voz)
 - ⚠️ Firefox a veces no tiene voz francesa instalada
 
@@ -64,7 +66,7 @@ La app usa la voz francesa que tu sistema tenga instalada. Si no escuchas nada:
 
 ## 📁 Estructura del proyecto
 
-```
+```text
 frances_App/
 ├── index.html       ← La aplicación completa (todo en un archivo)
 ├── abrir.bat        ← Doble clic para abrir en Windows
@@ -81,7 +83,7 @@ frances_App/
 ## 🛠️ Requisitos
 
 | Lo que necesitas | ¿Por qué? |
-|---|---|
+| --- | --- |
 | Un navegador moderno (Chrome, Edge, Firefox) | Para abrir la app |
 | Voz francesa instalada en Windows | Para escuchar las palabras |
 | **(Opcional)** Python 3.x | Solo si quieres usar el servidor local |
@@ -103,6 +105,7 @@ frances_App/
 
 **"Quiero reiniciar todo mi progreso"**
 → Abre la consola del navegador (F12), pestaña "Consola" y escribe:
+
 ```js
 localStorage.clear(); location.reload();
 ```
@@ -116,6 +119,23 @@ localStorage.clear(); location.reload();
 3. **Flashcards 10 minutos al día** es mejor que 1 hora una vez por semana
 4. **Reto Diario** — hazlo cada día para mantener una racha 🔥
 5. Cuando te sientas lista, prueba **Maratón Mixto 🔥**
+
+---
+
+## 🔒 Seguridad
+
+Este proyecto fue revisado con las siguientes medidas:
+
+- ✅ **Cero dependencias externas.** No se cargan CDNs, fuentes ni scripts de terceros → sin riesgo de cadena de suministro.
+- ✅ **Sin conexiones de red.** La app no envía datos a ningún servidor. Todo se guarda localmente en `localStorage` del navegador (solo progreso, sin datos personales).
+- ✅ **Content Security Policy (CSP)** activa en `index.html` que bloquea scripts externos, iframes, formularios y recursos remotos.
+- ✅ **Escape de HTML** en todo contenido dinámico insertado en el DOM — previene XSS incluso si se modifica la lista de palabras.
+- ✅ **Sin `eval`, sin `document.write`, sin `onclick` inline con datos** — listeners delegados con atributos `data-*`.
+- ✅ **Servidor local restringido a `127.0.0.1`.** Si usas `servidor.py`, **no** se expone a otros dispositivos de la red Wi-Fi.
+- ✅ **Cabeceras de seguridad** en el servidor: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Cache-Control`.
+- ✅ **Licencia MIT** — código abierto y auditable.
+
+Si encuentras un problema de seguridad, por favor abre un issue en GitHub.
 
 ---
 
